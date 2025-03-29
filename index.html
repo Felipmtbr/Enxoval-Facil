@@ -90,6 +90,9 @@
 
             <h3>Lista de Enxoval</h3>
             <ul id="list"></ul>
+
+            <!-- Button to clear history -->
+            <button onclick="clearHistory()" style="width: 100%; margin-top: 20px; background-color: #e74c3c; color: white;">Limpar Histórico</button>
         </div>
     </div>
 
@@ -164,6 +167,13 @@
                 </ul>
             `;
             document.getElementById('enxoval-details').innerHTML = fullEnxoval;
+        }
+
+        function clearHistory() {
+            if (confirm("Tem certeza que deseja limpar seu histórico de itens?")) {
+                localStorage.removeItem('items'); // Remove todos os itens do localStorage
+                loadItems(); // Recarrega a lista após limpar
+            }
         }
     </script>
 </body>
