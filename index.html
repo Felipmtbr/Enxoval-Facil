@@ -85,13 +85,11 @@
     <div class="container">
         <h2>Monte seu Enxoval</h2>
         
-        <!-- Login Section -->
         <div id="login" class="login">
             <input type="text" id="username" placeholder="Seu nome">
             <button onclick="login()">Entrar</button>
         </div>
 
-        <!-- Main App Section -->
         <div id="app" class="hidden">
             <label for="room">Escolha um cômodo:</label>
             <select id="room">
@@ -275,4 +273,31 @@
         }
 
         function toggleItemStatus(itemName, itemPrice, room) {
-            let isChecked = localStorage
+            let isChecked = localStorage.getItem(itemName) === 'checked';
+            if (isChecked) {
+                localStorage.removeItem(itemName);
+            } else {
+                localStorage.setItem(itemName, 'checked');
+            }
+            renderEnxoval(selectedItems);
+        }
+
+        function loadItems() {
+            let items = JSON.parse(localStorage.getItem('items')) || [];
+            const list = document.getElementById('list');
+            list.innerHTML = '';
+            items.forEach(({ room, item }) => {
+                const li = document.createElement('li');
+                li.textContent = `${room}: ${item}`;
+                list.appendChild(li);
+            });
+        }
+
+        if (localStorage.getItem('user')) {
+            document.getElementById('login').classList.add('hidden');
+            document.getElementById('app').classList.remove('hidden');
+            loadItems();
+        }
+    </script>
+</body>
+</html>
