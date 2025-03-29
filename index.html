@@ -108,9 +108,20 @@
     <script>
         let totalInvestidoEssencial = 0;
         let totalInvestidoCompleto = 0;
+        const essentialItems = [
+            { category: 'Quarto', item: 'Colchão', price: 700 },
+            { category: 'Quarto', item: 'Cama', price: 350 },
+            { category: 'Utilidades do Lar', item: 'Talheres (6 peças)', price: 80 },
+            { category: 'Utilidades do Lar', item: 'Aspirador de Pó', price: 400 }
+        ];
+        const fullItems = [
+            { category: 'Quarto', item: 'Colchão', price: 1000 },
+            { category: 'Quarto', item: 'Cama', price: 500 },
+            { category: 'Utilidades do Lar', item: 'Aspirador de Pó', price: 600 }
+        ];
 
         function showEssentialEnxoval() {
-            const essentialEnxoval = `
+            let essentialEnxoval = `
                 <h3>Enxoval Essencial</h3>
                 <table>
                     <thead>
@@ -123,55 +134,41 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>Quarto</td>
-                            <td>Colchão</td>
-                            <td>R$ 700,00</td>
-                            <td><input type="checkbox" onclick="markItem(this, '700', 'essencial')"></td>
-                            <td><input type="number" onchange="updateValue(this, '700', 'essencial')"></td>
-                        </tr>
-                        <tr>
-                            <td>Quarto</td>
-                            <td>Cama</td>
-                            <td>R$ 350,00</td>
-                            <td><input type="checkbox" onclick="markItem(this, '350', 'essencial')"></td>
-                            <td><input type="number" onchange="updateValue(this, '350', 'essencial')"></td>
-                        </tr>
-                        <tr>
-                            <td>Utilidades do Lar</td>
-                            <td>Talheres (6 peças)</td>
-                            <td>R$ 80,00</td>
-                            <td><input type="checkbox" onclick="markItem(this, '80', 'essencial')"></td>
-                            <td><input type="number" onchange="updateValue(this, '80', 'essencial')"></td>
-                        </tr>
-                        <tr>
-                            <td>Utilidades do Lar</td>
-                            <td>Aspirador de Pó</td>
-                            <td>R$ 400,00</td>
-                            <td><input type="checkbox" onclick="markItem(this, '400', 'essencial')"></td>
-                            <td><input type="number" onchange="updateValue(this, '400', 'essencial')"></td>
-                        </tr>
-                        <tr class="total-row">
-                            <td colspan="4">Total Investido:</td>
-                            <td id="total-investido-essencial">R$ 0,00</td>
-                        </tr>
-                        <tr class="total-row">
-                            <td colspan="4">Total Restante:</td>
-                            <td id="total-restante-essencial">R$ 1.530,00</td>
-                        </tr>
-                        <tr class="total-row">
-                            <td colspan="4">Próximo Item a Adquirir:</td>
-                            <td id="proximo-item-essencial">Colchão</td>
-                        </tr>
-                    </tbody>
-                </table>
+            `;
+            essentialItems.forEach(item => {
+                essentialEnxoval += `
+                    <tr>
+                        <td>${item.category}</td>
+                        <td>${item.item}</td>
+                        <td>${item.price.toFixed(2)}</td>
+                        <td><input type="checkbox" onclick="markItem(this, ${item.price}, 'essencial')"></td>
+                        <td><input type="number" onchange="updateValue(this, ${item.price}, 'essencial')"></td>
+                    </tr>
+                `;
+            });
+
+            essentialEnxoval += `
+                <tr class="total-row">
+                    <td colspan="4">Total Investido:</td>
+                    <td id="total-investido-essencial">R$ 0,00</td>
+                </tr>
+                <tr class="total-row">
+                    <td colspan="4">Total Restante:</td>
+                    <td id="total-restante-essencial">R$ 2.530,00</td>
+                </tr>
+                <tr class="total-row">
+                    <td colspan="4">Próximo Item a Adquirir:</td>
+                    <td id="proximo-item-essencial">Colchão</td>
+                </tr>
+                </tbody>
+            </table>
             `;
             document.getElementById('enxoval-details').innerHTML = essentialEnxoval;
             resetTotals('essencial');
         }
 
         function showFullEnxoval() {
-            const fullEnxoval = `
+            let fullEnxoval = `
                 <h3>Enxoval Completo</h3>
                 <table>
                     <thead>
@@ -184,41 +181,34 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>Quarto</td>
-                            <td>Colchão</td>
-                            <td>R$ 1.000,00</td>
-                            <td><input type="checkbox" onclick="markItem(this, '1000', 'completo')"></td>
-                            <td><input type="number" onchange="updateValue(this, '1000', 'completo')"></td>
-                        </tr>
-                        <tr>
-                            <td>Quarto</td>
-                            <td>Cama</td>
-                            <td>R$ 500,00</td>
-                            <td><input type="checkbox" onclick="markItem(this, '500', 'completo')"></td>
-                            <td><input type="number" onchange="updateValue(this, '500', 'completo')"></td>
-                        </tr>
-                        <tr>
-                            <td>Utilidades do Lar</td>
-                            <td>Aspirador de Pó</td>
-                            <td>R$ 600,00</td>
-                            <td><input type="checkbox" onclick="markItem(this, '600', 'completo')"></td>
-                            <td><input type="number" onchange="updateValue(this, '600', 'completo')"></td>
-                        </tr>
-                        <tr class="total-row">
-                            <td colspan="4">Total Investido:</td>
-                            <td id="total-investido-completo">R$ 0,00</td>
-                        </tr>
-                        <tr class="total-row">
-                            <td colspan="4">Total Restante:</td>
-                            <td id="total-restante-completo">R$ 2.100,00</td>
-                        </tr>
-                        <tr class="total-row">
-                            <td colspan="4">Próximo Item a Adquirir:</td>
-                            <td id="proximo-item-completo">Colchão</td>
-                        </tr>
-                    </tbody>
-                </table>
+            `;
+            fullItems.forEach(item => {
+                fullEnxoval += `
+                    <tr>
+                        <td>${item.category}</td>
+                        <td>${item.item}</td>
+                        <td>${item.price.toFixed(2)}</td>
+                        <td><input type="checkbox" onclick="markItem(this, ${item.price}, 'completo')"></td>
+                        <td><input type="number" onchange="updateValue(this, ${item.price}, 'completo')"></td>
+                    </tr>
+                `;
+            });
+
+            fullEnxoval += `
+                <tr class="total-row">
+                    <td colspan="4">Total Investido:</td>
+                    <td id="total-investido-completo">R$ 0,00</td>
+                </tr>
+                <tr class="total-row">
+                    <td colspan="4">Total Restante:</td>
+                    <td id="total-restante-completo">R$ 2.600,00</td>
+                </tr>
+                <tr class="total-row">
+                    <td colspan="4">Próximo Item a Adquirir:</td>
+                    <td id="proximo-item-completo">Colchão</td>
+                </tr>
+                </tbody>
+            </table>
             `;
             document.getElementById('enxoval-details').innerHTML = fullEnxoval;
             resetTotals('completo');
@@ -227,33 +217,61 @@
         function markItem(checkbox, value, category) {
             if (checkbox.checked) {
                 if (category === 'essencial') {
-                    totalInvestidoEssencial += parseFloat(value);
-                    updateTotals('essencial');
+                    totalInvestidoEssencial += value;
                 } else {
-                    totalInvestidoCompleto += parseFloat(value);
-                    updateTotals('completo');
+                    totalInvestidoCompleto += value;
                 }
             } else {
                 if (category === 'essencial') {
-                    totalInvestidoEssencial -= parseFloat(value);
-                    updateTotals('essencial');
+                    totalInvestidoEssencial -= value;
                 } else {
-                    totalInvestidoCompleto -= parseFloat(value);
-                    updateTotals('completo');
+                    totalInvestidoCompleto -= value;
                 }
             }
+            updateTotals(category);
         }
 
         function updateValue(input, value, category) {
             const newValue = parseFloat(input.value) || 0;
             if (category === 'essencial') {
-                totalInvestidoEssencial += newValue - parseFloat(value);
-                updateTotals('essencial');
+                totalInvestidoEssencial += newValue - value;
             } else {
-                totalInvestidoCompleto += newValue - parseFloat(value);
-                updateTotals('completo');
+                totalInvestidoCompleto += newValue - value;
             }
+            updateTotals(category);
         }
 
         function updateTotals(category) {
-            if (category === 'essencial
+            if (category === 'essencial') {
+                const totalRestante = 2530 - totalInvestidoEssencial;
+                document.getElementById('total-investido-essencial').textContent = `R$ ${totalInvestidoEssencial.toFixed(2)}`;
+                document.getElementById('total-restante-essencial').textContent = `R$ ${totalRestante.toFixed(2)}`;
+                document.getElementById('proximo-item-essencial').textContent = getNextItem(essentialItems);
+            } else {
+                const totalRestante = 2600 - totalInvestidoCompleto;
+                document.getElementById('total-investido-completo').textContent = `R$ ${totalInvestidoCompleto.toFixed(2)}`;
+                document.getElementById('total-restante-completo').textContent = `R$ ${totalRestante.toFixed(2)}`;
+                document.getElementById('proximo-item-completo').textContent = getNextItem(fullItems);
+            }
+        }
+
+        function getNextItem(items) {
+            const remainingItems = items.filter(item => item.price > 0);
+            if (remainingItems.length > 0) {
+                return remainingItems[0].item;
+            }
+            return "Nenhum item restante";
+        }
+
+        function resetTotals(category) {
+            if (category === 'essencial') {
+                totalInvestidoEssencial = 0;
+                updateTotals('essencial');
+            } else {
+                totalInvestidoCompleto = 0;
+                updateTotals('completo');
+            }
+        }
+    </script>
+</body>
+</html>
