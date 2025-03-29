@@ -5,81 +5,76 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Enxoval de Casa Nova</title>
     <style>
-        body { font-family: Arial, sans-serif; padding: 20px; }
-        .container { max-width: 600px; margin: auto; }
-        .room { margin-bottom: 20px; }
-        .hidden { display: none; }
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            text-align: center;
+            color: #4CAF50;
+        }
+        input[type="text"], select {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px;
+            margin: 5px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #successMessage {
+            color: green;
+            font-weight: bold;
+            text-align: center;
+        }
+        .item-actions button {
+            background-color: #f44336;
+            margin-left: 10px;
+            padding: 5px 10px;
+        }
+        .item-actions button.edit {
+            background-color: #2196F3;
+        }
+        .item-actions button:hover {
+            background-color: #d32f2f;
+        }
+        ul {
+            padding-left: 20px;
+        }
+        li {
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .hidden {
+            display: none;
+        }
     </style>
 </head>
-<body>
-    <div class="container">
-        <h2>Monte seu Enxoval</h2>
-        <div id="login" class="login">
-            <input type="text" id="username" placeholder="Seu nome">
-            <button onclick="login()">Entrar</button>
-        </div>
-        <div id="app" class="hidden">
-            <label for="room">Escolha um cômodo:</label>
-            <select id="room">
-                <option>Quarto</option>
-                <option>Cozinha</option>
-                <option>Banheiro</option>
-                <option>Lavanderia<option>
-                <option>Sala</option>
-            </select>
-            <input type="text" id="item" placeholder="Nome do item">
-            <button onclick="addItem()">Adicionar</button>
-            
-            <h3>Lista de Enxoval</h3>
-            <ul id="list"></ul>
-            <button onclick="comparePrices()">Comparar Preços</button>
-        </div>
-    </div>
-
-    <script>
-        function login() {
-            const username = document.getElementById('username').value;
-            if (!username) return alert("Digite seu nome");
-            localStorage.setItem('user', username);
-            document.getElementById('login').classList.add('hidden');
-            document.getElementById('app').classList.remove('hidden');
-            loadItems();
-        }
-
-        function addItem() {
-            const room = document.getElementById('room').value;
-            const item = document.getElementById('item').value;
-            if (!item) return alert("Digite um item");
-            
-            const list = document.getElementById('list');
-            const li = document.createElement('li');
-            li.textContent = `${room}: ${item}`;
-            list.appendChild(li);
-            
-            saveItem(room, item);
-            document.getElementById('item').value = '';
-        }
-
-        function saveItem(room, item) {
-            let items = JSON.parse(localStorage.getItem('items')) || [];
-            items.push({ room, item });
-            localStorage.setItem('items', JSON.stringify(items));
-        }
-
-        function loadItems() {
-            let items = JSON.parse(localStorage.getItem('items')) || [];
-            const list = document.getElementById('list');
-            list.innerHTML = '';
-            items.forEach(({ room, item }) => {
-                const li = document.createElement('li');
-                li.textContent = `${room}: ${item}`;
-                list.appendChild(li);
-            });
-        }
-
-        function comparePrices() {
-            alert("Funcionalidade de comparação de preços em desenvolvimento!");
-        }
-    </script>
-</body>
-</html>
