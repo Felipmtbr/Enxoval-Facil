@@ -5,63 +5,144 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Enxoval de Casa Nova</title>
     <style>
-        /* Seu estilo permanece o mesmo */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-top: 50px;
+        }
+        h2 {
+            text-align: center;
+            color: #2c3e50;
+        }
+        .category {
+            margin-top: 30px;
+        }
+        .category h3 {
+            color: #2c3e50;
+        }
+        .item {
+            margin: 10px 0;
+        }
+        .item span {
+            display: block;
+            margin-top: 5px;
+            color: #7f8c8d;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #2c3e50;
+            color: #fff;
+        }
+        .total-row {
+            font-weight: bold;
+            background-color: #ecf0f1;
+        }
+        .button-group {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .button-group button {
+            width: 45%;
+            padding: 15px;
+            margin: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .button-group .essential-btn {
+            background-color: #3498db;
+            color: #fff;
+        }
+        .button-group .full-btn {
+            background-color: #e74c3c;
+            color: #fff;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h2>Monte seu Enxoval</h2>
-        
+
         <div class="button-group">
             <button class="essential-btn" onclick="showEssentialEnxoval()">Enxoval Essencial</button>
             <button class="full-btn" onclick="showFullEnxoval()">Enxoval Completo</button>
         </div>
 
         <div id="enxoval-details"></div>
-
-        <button class="save-btn" onclick="saveProgress()">Salvar Alterações</button>
     </div>
 
     <script>
-        // Variáveis para armazenar os itens do enxoval
-        let essentialItems = [
+        let totalInvestidoEssencial = 0;
+        let totalInvestidoCompleto = 0;
+        const essentialItems = [
             { category: 'Quarto', item: 'Colchão', price: 700, acquired: false },
             { category: 'Quarto', item: 'Cama', price: 350, acquired: false },
-            // outros itens essenciais...
+            { category: 'Quarto', item: 'Travesseiro', price: 50, acquired: false },
+            { category: 'Quarto', item: 'Jogo de Lençol', price: 80, acquired: false },
+            { category: 'Quarto', item: 'Cobertor ou Edredom', price: 120, acquired: false },
+            { category: 'Sala', item: 'Sofá', price: 800, acquired: false },
+            { category: 'Sala', item: 'Rack para TV', price: 300, acquired: false },
+            { category: 'Sala', item: 'TV (32" a 43")', price: 1200, acquired: false },
+            { category: 'Sala', item: 'Mesa de Centro', price: 200, acquired: false },
+            { category: 'Cozinha', item: 'Fogão', price: 500, acquired: false },
+            { category: 'Cozinha', item: 'Geladeira (300L a 350L)', price: 1500, acquired: false },
+            { category: 'Cozinha', item: 'Micro-ondas', price: 400, acquired: false },
+            { category: 'Cozinha', item: 'Liquidificador', price: 150, acquired: false },
+            { category: 'Cozinha', item: 'Panelas (1 grande e 1 pequena)', price: 200, acquired: false },
+            { category: 'Cozinha', item: 'Talheres (6 peças)', price: 60, acquired: false },
+            { category: 'Cozinha', item: 'Copos e Taças', price: 50, acquired: false },
+            { category: 'Cozinha', item: 'Jogo de Pratos e Xícaras', price: 80, acquired: false },
+            { category: 'Banheiro', item: 'Toalhas de Banho (2 a 3)', price: 75, acquired: false },
+            { category: 'Banheiro', item: 'Toalhas de Rosto (2 a 3)', price: 50, acquired: false },
+            { category: 'Banheiro', item: 'Tapetes de Banheiro', price: 60, acquired: false },
+            { category: 'Utilidades', item: 'Aspirador de Pó', price: 400, acquired: false },
+            { category: 'Utilidades', item: 'Vassoura e Rodo', price: 50, acquired: false },
+            { category: 'Utilidades', item: 'Cesto de Lixo (cozinha e banheiro)', price: 40, acquired: false },
+            { category: 'Utilidades', item: 'Kit de Limpeza', price: 30, acquired: false },
+            { category: 'Utilidades', item: 'Cesto de Roupa Suja', price: 60, acquired: false }
         ];
 
-        let fullItems = [
+        const fullItems = [
             { category: 'Quarto', item: 'Cama Box com Colchão', price: 1200, acquired: false },
-            { category: 'Sala', item: 'Sofá', price: 1500, acquired: false },
-            // outros itens completos...
+            { category: 'Quarto', item: 'Cômoda ou Guarda-Roupa', price: 800, acquired: false },
+            { category: 'Quarto', item: 'Criado-Mudo', price: 150, acquired: false },
+            { category: 'Quarto', item: 'Jogo de Lençol de Luxo', price: 120, acquired: false },
+            { category: 'Quarto', item: 'Edredom ou Cobertores Extras', price: 180, acquired: false },
+            { category: 'Sala', item: 'Sofá Maior (3 ou 4 lugares)', price: 1500, acquired: false },
+            { category: 'Sala', item: 'TV (50" a 65")', price: 2500, acquired: false },
+            { category: 'Sala', item: 'Rack ou Painel para TV', price: 500, acquired: false },
+            { category: 'Sala', item: 'Mesa de Jantar (4 a 6 lugares)', price: 800, acquired: false },
+            { category: 'Sala', item: 'Poltrona ou Cadeira Adicional', price: 300, acquired: false },
+            { category: 'Cozinha', item: 'Fogão de 4 ou 6 bocas', price: 700, acquired: false },
+            { category: 'Cozinha', item: 'Geladeira Duplex', price: 2000, acquired: false },
+            { category: 'Cozinha', item: 'Micro-ondas de Maior Capacidade', price: 600, acquired: false },
+            { category: 'Cozinha', item: 'Liquidificador de Alta Potência', price: 250, acquired: false },
+            { category: 'Cozinha', item: 'Batedeira ou Processador de Alimentos', price: 300, acquired: false },
+            { category: 'Cozinha', item: 'Panelas Variadas', price: 400, acquired: false },
+            { category: 'Sala', item: 'Estante ou Rack Adicional', price: 400, acquired: false }
         ];
 
-        // Carregar os dados do LocalStorage quando a página for carregada
-        window.onload = function() {
-            loadProgress();
-        }
-
-        // Carregar os dados do LocalStorage
-        function loadProgress() {
-            const savedEssentialItems = JSON.parse(localStorage.getItem('essentialItems'));
-            const savedFullItems = JSON.parse(localStorage.getItem('fullItems'));
-
-            if (savedEssentialItems) {
-                essentialItems = savedEssentialItems;
-            }
-            if (savedFullItems) {
-                fullItems = savedFullItems;
-            }
-        }
-
-        // Salvar os dados no LocalStorage
-        function saveProgress() {
-            localStorage.setItem('essentialItems', JSON.stringify(essentialItems));
-            localStorage.setItem('fullItems', JSON.stringify(fullItems));
-            alert('Alterações salvas!');
-        }
-
-        // Exibir o enxoval essencial
         function showEssentialEnxoval() {
             let essentialEnxoval = '';
             const categories = ['Quarto', 'Sala', 'Cozinha', 'Banheiro', 'Utilidades'];
@@ -74,7 +155,6 @@
             document.getElementById('enxoval-details').innerHTML = essentialEnxoval;
         }
 
-        // Exibir o enxoval completo
         function showFullEnxoval() {
             let fullEnxoval = '';
             const categories = ['Quarto', 'Sala', 'Cozinha'];
@@ -87,7 +167,6 @@
             document.getElementById('enxoval-details').innerHTML = fullEnxoval;
         }
 
-        // Gerar a tabela de itens por categoria
         function generateCategoryTable(category, items, enxovalType) {
             let categoryTable = `
                 <h3>${category}</h3>
@@ -136,7 +215,6 @@
             return categoryTable;
         }
 
-        // Calcular o total restante da categoria
         function calculateRemaining(category, enxovalType) {
             const items = enxovalType === 'essencial' ? essentialItems : fullItems;
             const itemsInCategory = items.filter(item => item.category === category);
@@ -148,20 +226,17 @@
             return (totalCategoryValue - totalInvestidoInCategory).toFixed(2);
         }
 
-        // Obter o próximo item a ser adquirido
         function getNextItem(items) {
             const remainingItems = items.filter(item => !item.acquired);
             return remainingItems.length > 0 ? remainingItems[0].item : "Nenhum item restante";
         }
 
-        // Marcar um item como adquirido
         function markItem(checkbox, value, enxovalType, category, itemName) {
             const item = (enxovalType === 'essencial' ? essentialItems : fullItems).find(item => item.category === category && item.item === itemName);
             item.acquired = checkbox.checked;
             updateTotals(category, enxovalType);
         }
 
-        // Atualizar o valor de um item
         function updateValue(input, value, enxovalType, category, itemName) {
             const item = (enxovalType === 'essencial' ? essentialItems : fullItems).find(item => item.category === category && item.item === itemName);
             const newValue = parseFloat(input.value) || 0;
@@ -169,19 +244,17 @@
             updateTotals(category, enxovalType);
         }
 
-        // Atualizar os totais de cada categoria
         function updateTotals(category, enxovalType) {
             let totalInvestido = 0;
             const items = enxovalType === 'essencial' ? essentialItems : fullItems;
             items.filter(item => item.category === category).forEach(item => {
-                if (item.acquired) {
-                    totalInvestido += item.price;
-                }
+                if (item.acquired) totalInvestido += item.price;
             });
 
+            const totalRemaining = calculateRemaining(category, enxovalType);
             document.getElementById(`total-investido-${enxovalType}-${category}`).textContent = `R$ ${totalInvestido.toFixed(2)}`;
-            document.getElementById(`total-restante-${enxovalType}-${category}`).textContent = `R$ ${calculateRemaining(category, enxovalType)}`;
-            document.getElementById(`proximo-item-${enxovalType}-${category}`).textContent = getNextItem(items);
+            document.getElementById(`total-restante-${enxovalType}-${category}`).textContent = `R$ ${totalRemaining}`;
+            document.getElementById(`proximo-item-${enxovalType}-${category}`).textContent = getNextItem(items.filter(item => item.category === category));
         }
     </script>
 </body>
