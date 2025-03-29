@@ -6,55 +6,86 @@
     <title>Enxoval de Casa Nova</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            padding: 20px;
+            font-family: 'Arial', sans-serif;
             background-color: #f4f4f9;
-            color: #333;
+            margin: 0;
+            padding: 0;
         }
         .container {
-            max-width: 800px;
+            width: 80%;
             margin: auto;
-            background-color: white;
+            background-color: #fff;
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-top: 50px;
         }
         h2 {
-            color: #2c3e50;
             text-align: center;
+            color: #2c3e50;
         }
-        select, input, button {
+        .form-section, .category-section {
+            margin-bottom: 30px;
+        }
+        .form-section input, .form-section select, .form-section button {
+            width: 48%;
+            padding: 10px;
+            margin: 10px 1%;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .form-section button {
             width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #ccc;
-            border-radius: 5px;
+            background-color: #2ecc71;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            padding: 15px;
         }
-        .hidden { display: none; }
-        .item-list {
+        .form-section button:hover {
+            background-color: #27ae60;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
             margin-top: 20px;
-            padding: 10px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #2c3e50;
+            color: #fff;
+        }
+        .total-row {
+            font-weight: bold;
             background-color: #ecf0f1;
-            border-radius: 5px;
-            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-        }
-        .item-list ul {
-            list-style-type: none;
-            padding: 0;
-        }
-        .item-list li {
-            padding: 8px;
-            background-color: #fff;
-            margin: 5px 0;
-            border-radius: 5px;
-            border: 1px solid #ccc;
         }
         .button-group {
             text-align: center;
         }
         .button-group button {
             width: 45%;
+            padding: 15px;
             margin: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .button-group .essential-btn {
+            background-color: #3498db;
+            color: #fff;
+        }
+        .button-group .full-btn {
+            background-color: #e74c3c;
+            color: #fff;
+        }
+        .category-section {
+            margin-top: 40px;
         }
     </style>
 </head>
@@ -62,119 +93,79 @@
     <div class="container">
         <h2>Monte seu Enxoval</h2>
         
-        <!-- Login Section -->
-        <div id="login" class="login">
-            <input type="text" id="username" placeholder="Seu nome">
-            <button onclick="login()">Entrar</button>
-        </div>
-
-        <!-- Main App Section -->
-        <div id="app" class="hidden">
-            <label for="room">Escolha um cômodo:</label>
-            <select id="room">
-                <option>Quarto</option>
-                <option>Cozinha</option>
-                <option>Banheiro</option>
-                <option>Lavanderia</option>
-                <option>Sala</option>
+        <!-- Formulário de Adição de Itens -->
+        <div class="form-section">
+            <input type="text" id="itemName" placeholder="Nome do item">
+            <select id="itemCategory">
+                <option value="Quarto">Quarto</option>
+                <option value="Cozinha">Cozinha</option>
+                <option value="Banheiro">Banheiro</option>
+                <option value="Sala">Sala</option>
+                <option value="Lavanderia">Lavanderia</option>
             </select>
-            <input type="text" id="item" placeholder="Nome do item">
-            <button onclick="addItem()">Adicionar</button>
-            
-            <div class="button-group">
-                <button onclick="showEssentialEnxoval()">Enxoval Essencial</button>
-                <button onclick="showFullEnxoval()">Enxoval Pronto</button>
-            </div>
-
-            <div id="enxoval-details" class="item-list"></div>
-
-            <h3>Lista de Enxoval</h3>
-            <ul id="list"></ul>
-
-            <!-- Button to clear history -->
-            <button onclick="clearHistory()" style="width: 100%; margin-top: 20px; background-color: #e74c3c; color: white;">Limpar Histórico</button>
+            <input type="number" id="itemPrice" placeholder="Preço do item" min="0" step="0.01">
+            <button onclick="addItem()">Adicionar Item</button>
         </div>
+
+        <!-- Botões de Exibição de Enxoval -->
+        <div class="button-group">
+            <button class="essential-btn" onclick="showEssentialEnxoval()">Enxoval Essencial</button>
+            <button class="full-btn" onclick="showFullEnxoval()">Enxoval Completo</button>
+        </div>
+
+        <!-- Seções de Categorias -->
+        <div id="categoriesContainer"></div>
     </div>
 
     <script>
-        function login() {
-            const username = document.getElementById('username').value;
-            if (!username) return alert("Digite seu nome");
-            localStorage.setItem('user', username);
-            document.getElementById('login').classList.add('hidden');
-            document.getElementById('app').classList.remove('hidden');
-            loadItems();
-        }
-
+        // Função para adicionar um item à lista
         function addItem() {
-            const room = document.getElementById('room').value;
-            const item = document.getElementById('item').value;
-            if (!item) return alert("Digite um item");
+            const name = document.getElementById('itemName').value.trim();
+            const category = document.getElementById('itemCategory').value;
+            const price = parseFloat(document.getElementById('itemPrice').value);
             
-            const list = document.getElementById('list');
-            const li = document.createElement('li');
-            li.textContent = `${room}: ${item}`;
-            list.appendChild(li);
-            
-            saveItem(room, item);
-            document.getElementById('item').value = '';
-        }
-
-        function saveItem(room, item) {
-            let items = JSON.parse(localStorage.getItem('items')) || [];
-            items.push({ room, item });
-            localStorage.setItem('items', JSON.stringify(items));
-        }
-
-        function loadItems() {
-            let items = JSON.parse(localStorage.getItem('items')) || [];
-            const list = document.getElementById('list');
-            list.innerHTML = '';
-            items.forEach(({ room, item }) => {
-                const li = document.createElement('li');
-                li.textContent = `${room}: ${item}`;
-                list.appendChild(li);
-            });
-        }
-
-        function showEssentialEnxoval() {
-            const essentialEnxoval = `
-                <h3>Enxoval Essencial e Econômico</h3>
-                <ul>
-                    <li><strong>Quarto:</strong> Colchão (R$600), Cama (R$300), Travesseiro (R$40), Roupas de Cama (R$150)</li>
-                    <li><strong>Cozinha:</strong> Geladeira (R$1.200), Fogão (R$600), Panelas e Utensílios (R$300)</li>
-                    <li><strong>Banheiro:</strong> Toalhas de Banho e Rosto (R$100), Saboneteira e Organizadores (R$50)</li>
-                    <li><strong>Sala de Estar:</strong> Sofá (R$800)</li>
-                    <li><strong>Lavanderia:</strong> Máquina de Lavar (R$1.000), Cesto de Roupa Suja (R$30)</li>
-                    <li><strong>Itens Diversos:</strong> Cesta de Lixo (R$50)</li>
-                    <li><strong>Total:</strong> R$5.420</li>
-                </ul>
-            `;
-            document.getElementById('enxoval-details').innerHTML = essentialEnxoval;
-        }
-
-        function showFullEnxoval() {
-            const fullEnxoval = `
-                <h3>Enxoval Pronto</h3>
-                <ul>
-                    <li><strong>Quarto:</strong> Colchão (R$1.000), Cama (R$500), Travesseiro (R$80), Roupas de Cama (R$250)</li>
-                    <li><strong>Cozinha:</strong> Geladeira (R$1.500), Fogão (R$800), Micro-ondas (R$400), Panelas e Utensílios (R$500)</li>
-                    <li><strong>Banheiro:</strong> Toalhas de Banho e Rosto (R$150), Saboneteira e Organizadores (R$80)</li>
-                    <li><strong>Sala de Estar:</strong> Sofá (R$1.200), Estante ou Rack (R$300)</li>
-                    <li><strong>Lavanderia:</strong> Máquina de Lavar (R$1.300), Cesto de Roupa Suja (R$50)</li>
-                    <li><strong>Itens Diversos:</strong> Aspirador de Pó (R$200), Cesta de Lixo (R$100)</li>
-                    <li><strong>Total:</strong> R$7.910</li>
-                </ul>
-            `;
-            document.getElementById('enxoval-details').innerHTML = fullEnxoval;
-        }
-
-        function clearHistory() {
-            if (confirm("Tem certeza que deseja limpar seu histórico de itens?")) {
-                localStorage.removeItem('items'); // Remove todos os itens do localStorage
-                loadItems(); // Recarrega a lista após limpar
+            if (!name || isNaN(price) || price <= 0) {
+                alert('Por favor, preencha todos os campos corretamente.');
+                return;
             }
+
+            let items = JSON.parse(localStorage.getItem('items')) || [];
+            items.push({ name, category, price });
+            localStorage.setItem('items', JSON.stringify(items));
+
+            document.getElementById('itemName').value = '';
+            document.getElementById('itemPrice').value = '';
+
+            loadCategories();
         }
-    </script>
-</body>
-</html>
+
+        // Função para carregar e exibir as categorias e seus itens
+        function loadCategories() {
+            const categories = ['Quarto', 'Cozinha', 'Banheiro', 'Sala', 'Lavanderia'];
+            const container = document.getElementById('categoriesContainer');
+            container.innerHTML = '';
+
+            let items = JSON.parse(localStorage.getItem('items')) || [];
+
+            categories.forEach(category => {
+                const categoryItems = items.filter(item => item.category === category);
+                if (categoryItems.length > 0) {
+                    const section = document.createElement('div');
+                    section.classList.add('category-section');
+                    section.innerHTML = `
+                        <h3>${category}</h3>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Item</th>
+                                    <th>Preço (R$)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${categoryItems.map(item => `
+                                    <tr>
+                                        <td>${item.name}</td>
+                                        <td>${item.price.toFixed(2)}</td>
+                                    </tr>
+                                `).join('')}
+                                <16
