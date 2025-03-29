@@ -23,18 +23,6 @@
             color: #2c3e50;
             text-align: center;
         }
-        .header {
-            text-align: center;
-            background-color: #ff9a8b;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            color: #fff;
-        }
-        .header h3 {
-            margin: 0;
-            font-size: 24px;
-        }
         select, input, button {
             width: 100%;
             padding: 10px;
@@ -95,11 +83,7 @@
 </head>
 <body>
     <div class="container">
-        <!-- Header Section -->
-        <div class="header">
-            <h3>Lorenna e Felipe, o sonho começa por aqui...</h3>
-            <img src="/mnt/data/A_romantic_illustration_of_a_couple,_with_subtle_h.png" alt="Imagem de amor" width="100%">
-        </div>
+        <h2>Monte seu Enxoval</h2>
         
         <!-- Login Section -->
         <div id="login" class="login">
@@ -133,7 +117,162 @@
     </div>
 
     <script>
-        // Funções do código já explicadas na resposta anterior, sem alterações.
-    </script>
-</body>
-</html>
+        const itemsData = {
+            essential: {
+                "Quarto": [
+                    { name: "Colchão", price: 600 },
+                    { name: "Cama", price: 300 },
+                    { name: "Travesseiro", price: 40 },
+                    { name: "Roupas de Cama", price: 150 }
+                ],
+                "Cozinha": [
+                    { name: "Geladeira", price: 1200 },
+                    { name: "Fogão", price: 600 },
+                    { name: "Panelas e Utensílios", price: 300 }
+                ],
+                "Banheiro": [
+                    { name: "Toalhas de Banho e Rosto", price: 100 },
+                    { name: "Saboneteira e Organizadores", price: 50 }
+                ],
+                "Sala": [
+                    { name: "Sofá", price: 800 }
+                ],
+                "Lavanderia": [
+                    { name: "Máquina de Lavar", price: 1000 },
+                    { name: "Cesto de Roupa Suja", price: 30 }
+                ],
+                "Diversos": [
+                    { name: "Cesta de Lixo", price: 50 }
+                ]
+            },
+            full: {
+                "Quarto": [
+                    { name: "Colchão", price: 1000 },
+                    { name: "Cama", price: 500 },
+                    { name: "Travesseiro", price: 80 },
+                    { name: "Roupas de Cama", price: 250 }
+                ],
+                "Cozinha": [
+                    { name: "Geladeira", price: 1500 },
+                    { name: "Fogão", price: 800 },
+                    { name: "Micro-ondas", price: 400 },
+                    { name: "Panelas e Utensílios", price: 500 }
+                ],
+                "Banheiro": [
+                    { name: "Toalhas de Banho e Rosto", price: 150 },
+                    { name: "Saboneteira e Organizadores", price: 80 }
+                ],
+                "Sala": [
+                    { name: "Sofá", price: 1200 },
+                    { name: "Estante ou Rack", price: 300 }
+                ],
+                "Lavanderia": [
+                    { name: "Máquina de Lavar", price: 1300 },
+                    { name: "Cesto de Roupa Suja", price: 50 }
+                ],
+                "Diversos": [
+                    { name: "Aspirador de Pó", price: 200 },
+                    { name: "Cesta de Lixo", price: 100 }
+                ]
+            }
+        };
+
+        let selectedItems = {};
+
+        function login() {
+            const username = document.getElementById('username').value;
+            if (!username) return alert("Digite seu nome");
+            localStorage.setItem('user', username);
+            document.getElementById('login').classList.add('hidden');
+            document.getElementById('app').classList.remove('hidden');
+            loadItems();
+        }
+
+        function addItem() {
+            const room = document.getElementById('room').value;
+            const item = document.getElementById('item').value;
+            if (!item) return alert("Digite um item");
+            
+            const list = document.getElementById('list');
+            const li = document.createElement('li');
+            li.textContent = `${room}: ${item}`;
+            list.appendChild(li);
+            
+            saveItem(room, item);
+            document.getElementById('item').value = '';
+        }
+
+        function saveItem(room, item) {
+            let items = JSON.parse(localStorage.getItem('items')) || [];
+            items.push({ room, item });
+            localStorage.setItem('items', JSON.stringify(items));
+        }
+
+        function loadItems() {
+            let items = JSON.parse(localStorage.getItem('items')) || [];
+            const list = document.getElementById('list');
+            list.innerHTML = '';
+            items.forEach(({ room, item }) => {
+                const li = document.createElement('li');
+                li.textContent = `${room}: ${item}`;
+                list.appendChild(li);
+            });
+        }
+
+        function showEssentialEnxoval() {
+            selectedItems = itemsData.essential;
+            renderEnxoval(selectedItems);
+        }
+
+        function showFullEnxoval() {
+            selectedItems = itemsData.full;
+            renderEnxoval(selectedItems);
+        }
+
+        function renderEnxoval(items) {
+            let output = '';
+            let totalCategoryPrice = 0;
+            let totalInvested = 0;
+            let totalRemaining = 0;
+
+            Object.keys(items).forEach(room => {
+                output += `<div class="category-header">${room}</div>`;
+                let categoryPrice = 0;
+                let invested = 0;
+                let remaining = 0;
+                let nextItem = '';
+
+                output += `<div class="summary">`;
+
+                items[room].forEach((item, index) => {
+                    let isChecked = localStorage.getItem(item.name) === 'checked';
+                    categoryPrice += item.price;
+
+                    if (isChecked) {
+                        invested += item.price;
+                    }
+
+                    remaining = categoryPrice - invested;
+
+                    nextItem = index === 0 ? item.name : nextItem;
+
+                    output += `
+                        <label>
+                            <input type="checkbox" ${isChecked ? 'checked' : ''} onclick="toggleItemStatus('${item.name}', ${item.price}, '${room}')">
+                            ${item.name} - R$ ${item.price}
+                        </label><br>`;
+                });
+
+                output += `
+                    <p>Total da Categoria: R$ ${categoryPrice}</p>
+                    <p>Investido: R$ ${invested}</p>
+                    <p>Faltam: R$ ${remaining}</p>
+                    <p class="next-item">Próximo item recomendado: ${nextItem}</p>
+                </div>`;
+            });
+
+            document.getElementById('enxoval-details').innerHTML = output;
+        }
+
+        function toggleItemStatus(itemName, itemPrice, room) {
+            let isChecked = localStorage
