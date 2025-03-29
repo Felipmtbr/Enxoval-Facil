@@ -94,14 +94,8 @@
     <div class="container">
         <h2>Monte seu Enxoval</h2>
 
-        <!-- Login Section -->
-        <div id="login" class="login">
-            <input type="text" id="username" placeholder="Seu nome">
-            <button onclick="login()">Entrar</button>
-        </div>
-
         <!-- Main App Section -->
-        <div id="app" class="hidden">
+        <div id="app">
             <label for="room">Escolha um cômodo:</label>
             <select id="room">
                 <option>Quarto</option>
@@ -129,15 +123,6 @@
     <script>
         let totalInvestido = 0;
         let totalRestante = 0;
-
-        function login() {
-            const username = document.getElementById('username').value;
-            if (!username) return alert("Digite seu nome");
-            localStorage.setItem('user', username);
-            document.getElementById('login').classList.add('hidden');
-            document.getElementById('app').classList.remove('hidden');
-            loadItems();
-        }
 
         function addItem() {
             const room = document.getElementById('room').value;
@@ -257,4 +242,35 @@
                             <td><input type="checkbox" onclick="markItem(this, '600')"></td>
                             <td><input type="number" onchange="updateValue(this, '600')"></td>
                         </tr>
-                        <tr class="
+                        <tr class="total-row"><td colspan="4">Total Investido:</td><td id="total-investido">R$ 0,00</td></tr>
+                        <tr class="total-row"><td colspan="4">Total Restante:</td><td id="total-restante">R$ 2.100,00</td></tr>
+                    </tbody>
+                </table>
+            `;
+            document.getElementById('enxoval-details').innerHTML = fullEnxoval;
+            totalRestante = 2100;
+        }
+
+        function markItem(checkbox, value) {
+            if (checkbox.checked) {
+                totalInvestido += parseFloat(value);
+            } else {
+                totalInvestido -= parseFloat(value);
+            }
+            updateTotals();
+        }
+
+        function updateValue(input, value) {
+            const newValue = parseFloat(input.value) || 0;
+            totalInvestido += newValue - parseFloat(value);
+            updateTotals();
+        }
+
+        function updateTotals() {
+            document.getElementById('total-investido').textContent = `R$ ${totalInvestido.toFixed(2)}`;
+            const totalRestante = parseFloat(document.getElementById('total-restante').textContent.replace('R$ ', '')) - totalInvestido;
+            document.getElementById('total-restante').textContent = `R$ ${totalRestante.toFixed(2)}`;
+        }
+    </script>
+</body>
+</html>
