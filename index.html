@@ -109,6 +109,7 @@
                 <option>Banheiro</option>
                 <option>Lavanderia</option>
                 <option>Sala</option>
+                <option>Utilidades do Lar</option>
             </select>
             <input type="text" id="item" placeholder="Nome do item">
             <button onclick="addItem()">Adicionar</button>
@@ -126,6 +127,9 @@
     </div>
 
     <script>
+        let totalInvestido = 0;
+        let totalRestante = 0;
+
         function login() {
             const username = document.getElementById('username').value;
             if (!username) return alert("Digite seu nome");
@@ -175,22 +179,47 @@
                             <th>Categoria</th>
                             <th>Item</th>
                             <th>Preço (R$)</th>
+                            <th>Adquirido?</th>
+                            <th>Valor Pago</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr><td>Quarto</td><td>Colchão</td><td>R$ 700,00</td></tr>
-                        <tr><td>Quarto</td><td>Cama</td><td>R$ 350,00</td></tr>
-                        <tr><td>Quarto</td><td>Travesseiro</td><td>R$ 50,00</td></tr>
-                        <tr><td>Cozinha</td><td>Fogão</td><td>R$ 600,00</td></tr>
-                        <tr><td>Cozinha</td><td>Geladeira</td><td>R$ 1.200,00</td></tr>
-                        <tr><td>Banheiro</td><td>Toalhas de banho</td><td>R$ 100,00</td></tr>
-                        <tr><td>Sala</td><td>Sofá</td><td>R$ 600,00</td></tr>
-                        <tr><td>Lavanderia</td><td>Máquina de lavar</td><td>R$ 900,00</td></tr>
-                        <tr class="total-row"><td colspan="2">Total:</td><td>R$ 4.550,00</td></tr>
+                        <tr>
+                            <td>Quarto</td>
+                            <td>Colchão</td>
+                            <td>R$ 700,00</td>
+                            <td><input type="checkbox" onclick="markItem(this, '700')"></td>
+                            <td><input type="number" onchange="updateValue(this, '700')"></td>
+                        </tr>
+                        <tr>
+                            <td>Quarto</td>
+                            <td>Cama</td>
+                            <td>R$ 350,00</td>
+                            <td><input type="checkbox" onclick="markItem(this, '350')"></td>
+                            <td><input type="number" onchange="updateValue(this, '350')"></td>
+                        </tr>
+                        <tr>
+                            <td>Utilidades do Lar</td>
+                            <td>Talheres (6 peças)</td>
+                            <td>R$ 80,00</td>
+                            <td><input type="checkbox" onclick="markItem(this, '80')"></td>
+                            <td><input type="number" onchange="updateValue(this, '80')"></td>
+                        </tr>
+                        <tr>
+                            <td>Utilidades do Lar</td>
+                            <td>Aspirador de Pó</td>
+                            <td>R$ 400,00</td>
+                            <td><input type="checkbox" onclick="markItem(this, '400')"></td>
+                            <td><input type="number" onchange="updateValue(this, '400')"></td>
+                        </tr>
+                        <tr class="total-row"><td colspan="4">Total Investido:</td><td id="total-investido">R$ 0,00</td></tr>
+                        <tr class="total-row"><td colspan="4">Total Restante:</td><td id="total-restante">R$ 1.530,00</td></tr>
+                        <tr class="total-row"><td colspan="4">Próximo Item a Adquirir:</td><td id="proximo-item">Colchão</td></tr>
                     </tbody>
                 </table>
             `;
             document.getElementById('enxoval-details').innerHTML = essentialEnxoval;
+            totalRestante = 1530;
         }
 
         function showFullEnxoval() {
@@ -202,23 +231,30 @@
                             <th>Categoria</th>
                             <th>Item</th>
                             <th>Preço (R$)</th>
+                            <th>Adquirido?</th>
+                            <th>Valor Pago</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr><td>Quarto</td><td>Colchão</td><td>R$ 1.000,00</td></tr>
-                        <tr><td>Quarto</td><td>Cama</td><td>R$ 500,00</td></tr>
-                        <tr><td>Quarto</td><td>Travesseiro</td><td>R$ 80,00</td></tr>
-                        <tr><td>Cozinha</td><td>Fogão</td><td>R$ 800,00</td></tr>
-                        <tr><td>Cozinha</td><td>Geladeira</td><td>R$ 1.500,00</td></tr>
-                        <tr><td>Banheiro</td><td>Toalhas de banho</td><td>R$ 150,00</td></tr>
-                        <tr><td>Sala</td><td>Sofá</td><td>R$ 1.200,00</td></tr>
-                        <tr><td>Lavanderia</td><td>Máquina de lavar</td><td>R$ 1.300,00</td></tr>
-                        <tr class="total-row"><td colspan="2">Total:</td><td>R$ 7.630,00</td></tr>
-                    </tbody>
-                </table>
-            `;
-            document.getElementById('enxoval-details').innerHTML = fullEnxoval;
-        }
-    </script>
-</body>
-</html>
+                        <tr>
+                            <td>Quarto</td>
+                            <td>Colchão</td>
+                            <td>R$ 1.000,00</td>
+                            <td><input type="checkbox" onclick="markItem(this, '1000')"></td>
+                            <td><input type="number" onchange="updateValue(this, '1000')"></td>
+                        </tr>
+                        <tr>
+                            <td>Quarto</td>
+                            <td>Cama</td>
+                            <td>R$ 500,00</td>
+                            <td><input type="checkbox" onclick="markItem(this, '500')"></td>
+                            <td><input type="number" onchange="updateValue(this, '500')"></td>
+                        </tr>
+                        <tr>
+                            <td>Utilidades do Lar</td>
+                            <td>Aspirador de Pó</td>
+                            <td>R$ 600,00</td>
+                            <td><input type="checkbox" onclick="markItem(this, '600')"></td>
+                            <td><input type="number" onchange="updateValue(this, '600')"></td>
+                        </tr>
+                        <tr class="
