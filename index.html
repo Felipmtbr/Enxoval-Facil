@@ -144,59 +144,35 @@
         ];
 
         function showEssentialEnxoval() {
-            let essentialEnxoval = `
-                <h3>Enxoval Essencial</h3>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Categoria</th>
-                            <th>Item</th>
-                            <th>Preço (R$)</th>
-                            <th>Adquirido?</th>
-                            <th>Valor Pago</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-            `;
-            essentialItems.forEach(item => {
-                essentialEnxoval += `
-                    <tr>
-                        <td>${item.category}</td>
-                        <td>${item.item}</td>
-                        <td>${item.price.toFixed(2)}</td>
-                        <td><input type="checkbox" onclick="markItem(this, ${item.price}, 'essencial')"></td>
-                        <td><input type="number" onchange="updateValue(this, ${item.price}, 'essencial')"></td>
-                    </tr>
-                `;
+            let essentialEnxoval = '';
+            const categories = ['Quarto', 'Sala', 'Cozinha', 'Banheiro', 'Utilidades'];
+
+            categories.forEach(category => {
+                const itemsInCategory = essentialItems.filter(item => item.category === category);
+                essentialEnxoval += generateCategoryTable(category, itemsInCategory, 'essencial');
             });
 
-            essentialEnxoval += `
-                <tr class="total-row">
-                    <td colspan="4">Total Investido:</td>
-                    <td id="total-investido-essencial">R$ 0,00</td>
-                </tr>
-                <tr class="total-row">
-                    <td colspan="4">Total Restante:</td>
-                    <td id="total-restante-essencial">R$ 2.530,00</td>
-                </tr>
-                <tr class="total-row">
-                    <td colspan="4">Próximo Item a Adquirir:</td>
-                    <td id="proximo-item-essencial">Colchão</td>
-                </tr>
-                </tbody>
-            </table>
-            `;
             document.getElementById('enxoval-details').innerHTML = essentialEnxoval;
-            resetTotals('essencial');
         }
 
         function showFullEnxoval() {
-            let fullEnxoval = `
-                <h3>Enxoval Completo</h3>
+            let fullEnxoval = '';
+            const categories = ['Quarto', 'Sala', 'Cozinha'];
+
+            categories.forEach(category => {
+                const itemsInCategory = fullItems.filter(item => item.category === category);
+                fullEnxoval += generateCategoryTable(category, itemsInCategory, 'completo');
+            });
+
+            document.getElementById('enxoval-details').innerHTML = fullEnxoval;
+        }
+
+        function generateCategoryTable(category, items, enxovalType) {
+            let categoryTable = `
+                <h3>${category}</h3>
                 <table>
                     <thead>
                         <tr>
-                            <th>Categoria</th>
                             <th>Item</th>
                             <th>Preço (R$)</th>
                             <th>Adquirido?</th>
@@ -205,36 +181,38 @@
                     </thead>
                     <tbody>
             `;
-            fullItems.forEach(item => {
-                fullEnxoval += `
+
+            let totalInvestido = 0;
+            items.forEach(item => {
+                categoryTable += `
                     <tr>
-                        <td>${item.category}</td>
                         <td>${item.item}</td>
                         <td>${item.price.toFixed(2)}</td>
-                        <td><input type="checkbox" onclick="markItem(this, ${item.price}, 'completo')"></td>
-                        <td><input type="number" onchange="updateValue(this, ${item.price}, 'completo')"></td>
+                        <td><input type="checkbox" onclick="markItem(this, ${item.price}, '${enxovalType}')"></td>
+                        <td><input type="number" onchange="updateValue(this, ${item.price}, '${enxovalType}')"></td>
                     </tr>
                 `;
+                totalInvestido += item.price;
             });
 
-            fullEnxoval += `
+            categoryTable += `
                 <tr class="total-row">
-                    <td colspan="4">Total Investido:</td>
-                    <td id="total-investido-completo">R$ 0,00</td>
+                    <td colspan="3">Total Investido:</td>
+                    <td id="total-investido-${enxovalType}-${category}">R$ ${totalInvestido.toFixed(2)}</td>
                 </tr>
                 <tr class="total-row">
-                    <td colspan="4">Total Restante:</td>
-                    <td id="total-restante-completo">R$ 2.600,00</td>
+                    <td colspan="3">Total Restante:</td>
+                    <td id="total-restante-${enxovalType}-${category}">R$ ${totalInvestido < 2000 ? (2000 - totalInvestido).toFixed(2) : 0}</td>
                 </tr>
                 <tr class="total-row">
-                    <td colspan="4">Próximo Item a Adquirir:</td>
-                    <td id="proximo-item-completo">Cama Box com Colchão</td>
+                    <td colspan="3">Próximo Item a Adquirir:</td>
+                    <td id="proximo-item-${enxovalType}-${category}">${getNextItem(items)}</td>
                 </tr>
                 </tbody>
             </table>
             `;
-            document.getElementById('enxoval-details').innerHTML = fullEnxoval;
-            resetTotals('completo');
+
+            return categoryTable;
         }
 
         function markItem(checkbox, value, category) {
@@ -265,29 +243,21 @@
         }
 
         function updateTotals(category) {
-            if (category === 'essencial') {
-                const totalRestante = 2530 - totalInvestidoEssencial;
-                document.getElementById('total-investido-essencial').textContent = `R$ ${totalInvestidoEssencial.toFixed(2)}`;
-                document.getElementById('total-restante-essencial').textContent = `R$ ${totalRestante.toFixed(2)}`;
-                document.getElementById('proximo-item-essencial').textContent = getNextItem(essentialItems);
-            } else {
-                const totalRestante = 2600 - totalInvestidoCompleto;
-                document.getElementById('total-investido-completo').textContent = `R$ ${totalInvestidoCompleto.toFixed(2)}`;
-                document.getElementById('total-restante-completo').textContent = `R$ ${totalRestante.toFixed(2)}`;
-                document.getElementById('proximo-item-completo').textContent = getNextItem(fullItems);
-            }
+            const categories = ['Quarto', 'Sala', 'Cozinha', 'Banheiro', 'Utilidades'];
+
+            categories.forEach(category => {
+                updateCategoryTotals(category);
+            });
+        }
+
+        function updateCategoryTotals(category) {
+            const totalInvestido = calculateTotal(category, 'essencial');
+            document.getElementById(`total-investido-essencial-${category}`).textContent = `R$ ${totalInvestido.toFixed(2)}`;
         }
 
         function getNextItem(items) {
             const remainingItems = items.filter(item => !item.purchased);
             return remainingItems.length > 0 ? remainingItems[0].item : "Nenhum item restante";
-        }
-
-        function resetTotals(category) {
-            if (category === 'essencial') {
-                totalInvestidoEssencial = 0;
-                totalInvestidoCompleto = 0;
-            }
         }
     </script>
 </body>
