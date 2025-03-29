@@ -56,40 +56,19 @@
             width: 45%;
             margin: 10px;
         }
-        .category-header {
-            font-size: 1.2em;
-            font-weight: bold;
-            margin-top: 20px;
-            background-color: #2c3e50;
-            color: white;
-            padding: 10px;
-            border-radius: 5px;
-        }
-        .summary {
-            background-color: #fff;
-            padding: 10px;
-            margin-top: 10px;
-            border-radius: 5px;
-            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-        }
-        .summary p {
-            margin: 5px 0;
-        }
-        .next-item {
-            font-weight: bold;
-            color: #e74c3c;
-        }
     </style>
 </head>
 <body>
     <div class="container">
         <h2>Monte seu Enxoval</h2>
         
+        <!-- Login Section -->
         <div id="login" class="login">
             <input type="text" id="username" placeholder="Seu nome">
             <button onclick="login()">Entrar</button>
         </div>
 
+        <!-- Main App Section -->
         <div id="app" class="hidden">
             <label for="room">Escolha um cômodo:</label>
             <select id="room">
@@ -115,68 +94,6 @@
     </div>
 
     <script>
-        const itemsData = {
-            essential: {
-                "Quarto": [
-                    { name: "Colchão", price: 600 },
-                    { name: "Cama", price: 300 },
-                    { name: "Travesseiro", price: 40 },
-                    { name: "Roupas de Cama", price: 150 }
-                ],
-                "Cozinha": [
-                    { name: "Geladeira", price: 1200 },
-                    { name: "Fogão", price: 600 },
-                    { name: "Panelas e Utensílios", price: 300 }
-                ],
-                "Banheiro": [
-                    { name: "Toalhas de Banho e Rosto", price: 100 },
-                    { name: "Saboneteira e Organizadores", price: 50 }
-                ],
-                "Sala": [
-                    { name: "Sofá", price: 800 }
-                ],
-                "Lavanderia": [
-                    { name: "Máquina de Lavar", price: 1000 },
-                    { name: "Cesto de Roupa Suja", price: 30 }
-                ],
-                "Diversos": [
-                    { name: "Cesta de Lixo", price: 50 }
-                ]
-            },
-            full: {
-                "Quarto": [
-                    { name: "Colchão", price: 1000 },
-                    { name: "Cama", price: 500 },
-                    { name: "Travesseiro", price: 80 },
-                    { name: "Roupas de Cama", price: 250 }
-                ],
-                "Cozinha": [
-                    { name: "Geladeira", price: 1500 },
-                    { name: "Fogão", price: 800 },
-                    { name: "Micro-ondas", price: 400 },
-                    { name: "Panelas e Utensílios", price: 500 }
-                ],
-                "Banheiro": [
-                    { name: "Toalhas de Banho e Rosto", price: 150 },
-                    { name: "Saboneteira e Organizadores", price: 80 }
-                ],
-                "Sala": [
-                    { name: "Sofá", price: 1200 },
-                    { name: "Estante ou Rack", price: 300 }
-                ],
-                "Lavanderia": [
-                    { name: "Máquina de Lavar", price: 1300 },
-                    { name: "Cesto de Roupa Suja", price: 50 }
-                ],
-                "Diversos": [
-                    { name: "Aspirador de Pó", price: 200 },
-                    { name: "Cesta de Lixo", price: 100 }
-                ]
-            }
-        };
-
-        let selectedItems = {};
-
         function login() {
             const username = document.getElementById('username').value;
             if (!username) return alert("Digite seu nome");
@@ -218,85 +135,35 @@
         }
 
         function showEssentialEnxoval() {
-            selectedItems = itemsData.essential;
-            renderEnxoval(selectedItems);
+            const essentialEnxoval = `
+                <h3>Enxoval Essencial e Econômico</h3>
+                <ul>
+                    <li><strong>Quarto:</strong> Colchão (R$600), Cama (R$300), Travesseiro (R$40), Roupas de Cama (R$150)</li>
+                    <li><strong>Cozinha:</strong> Geladeira (R$1.200), Fogão (R$600), Panelas e Utensílios (R$300)</li>
+                    <li><strong>Banheiro:</strong> Toalhas de Banho e Rosto (R$100), Saboneteira e Organizadores (R$50)</li>
+                    <li><strong>Sala de Estar:</strong> Sofá (R$800)</li>
+                    <li><strong>Lavanderia:</strong> Máquina de Lavar (R$1.000), Cesto de Roupa Suja (R$30)</li>
+                    <li><strong>Itens Diversos:</strong> Cesta de Lixo (R$50)</li>
+                    <li><strong>Total:</strong> R$5.420</li>
+                </ul>
+            `;
+            document.getElementById('enxoval-details').innerHTML = essentialEnxoval;
         }
 
         function showFullEnxoval() {
-            selectedItems = itemsData.full;
-            renderEnxoval(selectedItems);
-        }
-
-        function renderEnxoval(items) {
-            let output = '';
-            let totalCategoryPrice = 0;
-            let totalInvested = 0;
-            let totalRemaining = 0;
-
-            Object.keys(items).forEach(room => {
-                output += `<div class="category-header">${room}</div>`;
-                let categoryPrice = 0;
-                let invested = 0;
-                let remaining = 0;
-                let nextItem = '';
-
-                output += `<div class="summary">`;
-
-                items[room].forEach((item, index) => {
-                    let isChecked = localStorage.getItem(item.name) === 'checked';
-                    categoryPrice += item.price;
-
-                    if (isChecked) {
-                        invested += item.price;
-                    }
-
-                    remaining = categoryPrice - invested;
-
-                    nextItem = index === 0 ? item.name : nextItem;
-
-                    output += `
-                        <label>
-                            <input type="checkbox" ${isChecked ? 'checked' : ''} onclick="toggleItemStatus('${item.name}', ${item.price}, '${room}')">
-                            ${item.name} - R$ ${item.price}
-                        </label><br>`;
-                });
-
-                output += `
-                    <p>Total da Categoria: R$ ${categoryPrice}</p>
-                    <p>Investido: R$ ${invested}</p>
-                    <p>Faltam: R$ ${remaining}</p>
-                    <p class="next-item">Próximo item recomendado: ${nextItem}</p>
-                </div>`;
-            });
-
-            document.getElementById('enxoval-details').innerHTML = output;
-        }
-
-        function toggleItemStatus(itemName, itemPrice, room) {
-            let isChecked = localStorage.getItem(itemName) === 'checked';
-            if (isChecked) {
-                localStorage.removeItem(itemName);
-            } else {
-                localStorage.setItem(itemName, 'checked');
-            }
-            renderEnxoval(selectedItems);
-        }
-
-        function loadItems() {
-            let items = JSON.parse(localStorage.getItem('items')) || [];
-            const list = document.getElementById('list');
-            list.innerHTML = '';
-            items.forEach(({ room, item }) => {
-                const li = document.createElement('li');
-                li.textContent = `${room}: ${item}`;
-                list.appendChild(li);
-            });
-        }
-
-        if (localStorage.getItem('user')) {
-            document.getElementById('login').classList.add('hidden');
-            document.getElementById('app').classList.remove('hidden');
-            loadItems();
+            const fullEnxoval = `
+                <h3>Enxoval Pronto</h3>
+                <ul>
+                    <li><strong>Quarto:</strong> Colchão (R$1.000), Cama (R$500), Travesseiro (R$80), Roupas de Cama (R$250)</li>
+                    <li><strong>Cozinha:</strong> Geladeira (R$1.500), Fogão (R$800), Micro-ondas (R$400), Panelas e Utensílios (R$500)</li>
+                    <li><strong>Banheiro:</strong> Toalhas de Banho e Rosto (R$150), Saboneteira e Organizadores (R$80)</li>
+                    <li><strong>Sala de Estar:</strong> Sofá (R$1.200), Estante ou Rack (R$300)</li>
+                    <li><strong>Lavanderia:</strong> Máquina de Lavar (R$1.300), Cesto de Roupa Suja (R$50)</li>
+                    <li><strong>Itens Diversos:</strong> Aspirador de Pó (R$200), Cesta de Lixo (R$100)</li>
+                    <li><strong>Total:</strong> R$7.910</li>
+                </ul>
+            `;
+            document.getElementById('enxoval-details').innerHTML = fullEnxoval;
         }
     </script>
 </body>
